@@ -1,0 +1,43 @@
+version: "3"
+services:
+  radius:
+    build: ./radius-docker
+    image: kap0ng/freeradius
+    restart: always
+    depends_on:
+      - db 
+    links:
+      - db:db
+    ports:
+      - '1812:1812/udp'
+      - '1813:1813/udp'
+    env_file:
+      - mysql.config.env
+      - config.env
+    volumes:
+      - ./clients.conf:/etc/freeradius/3.0/clients.conf
+  db:
+    image: mariadb:10
+    restart: always
+    env_file:
+      - mysql.config.env
+    volumes:
+      - "./mysql-data:/var/lib/mysql"
+  adminer:
+    image: adminer
+    ports:
+      - 9000:8080
+    links:
+      - db:db
+  printserver:
+    build: ./printserver
+    image: kap0ng/printserver
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - 8000:8000
+    links:
+      - db:db
+    env_file:
+      - config.env
