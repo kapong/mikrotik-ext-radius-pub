@@ -1,7 +1,6 @@
 version: "3"
 services:
   radius:
-    build: ./radius-docker
     image: kap0ng/freeradius
     restart: always
     depends_on:
@@ -30,7 +29,6 @@ services:
     links:
       - db:db
   printserver:
-    build: ./printserver
     image: kap0ng/printserver
     restart: always
     depends_on:
